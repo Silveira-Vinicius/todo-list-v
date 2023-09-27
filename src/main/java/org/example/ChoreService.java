@@ -1,3 +1,5 @@
+package org.example;
+
 import org.example.Exceptions.DuplicatedChoreException;
 import org.example.Exceptions.InvalidDeadlineException;
 import org.example.Exceptions.InvalidDescriptionException;
