@@ -1,6 +1,8 @@
 package org.example;
 
+
 import org.example.Exceptions.*;
+import org.example.Enumerators.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -80,6 +82,16 @@ public class ChoreService {
                 return chore;
         }).collect(Collectors.toList());
     }
-
+    public List<Chore> filterChores(ChoreFilter filter) {
+        switch (filter) {
+            case COMPLETED:
+                return this.chores.stream().filter(Chore::getIsCompleted).collect(Collectors.toList());
+            case UNCOMPLETED:
+                return this.chores.stream().filter(chore -> !chore.getIsCompleted()).collect(Collectors.toList());
+            case ALL:
+            default:
+                return this.chores;
+        }
+    }
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
 }

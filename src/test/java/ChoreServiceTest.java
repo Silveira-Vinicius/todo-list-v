@@ -2,10 +2,12 @@
 import org.example.Chore;
 import org.example.ChoreService;
 import org.example.Exceptions.*;
+import org.example.Enumerators.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -203,5 +205,73 @@ public class ChoreServiceTest {
         service.getChores().add(new Chore(Boolean.TRUE,"Chore #01" ,LocalDate.now().minusDays(1)));
         assertThrows(ToggleChoreWithInvalidDeadlineException.class
                 ,()-> service.toggleChore("Chore #01", LocalDate.now().minusDays(1)));
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is ALL > When the list is empty > Return all chores")
+    void filterChoresWhenTheFilterIsAllWhenTheListIsEmptyReturnAllChores() {
+        ChoreService service = new ChoreService();
+        List<Chore> response = service.filterChores(ChoreFilter.ALL);
+        assertTrue(response.isEmpty());
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is ALL > When the list is not empty > Return all chores")
+    void filterChoresWhenTheFilterIsAllWhenTheListIsNotEmptyReturnAllChores() {
+        ChoreService service = new ChoreService();
+        service.getChores().add(new Chore(Boolean.FALSE,"Chore #01",  LocalDate.now()));
+        service.getChores().add(new Chore(Boolean.TRUE,"Chore #02",  LocalDate.now()));
+        List<Chore> response = service.filterChores(ChoreFilter.ALL);
+        assertAll(
+                () -> assertEquals(2, response.size()),
+                () -> assertEquals("Chore #01", response.get(0).getDescription()),
+                () -> assertEquals(Boolean.FALSE, response.get(0).getIsCompleted()),
+                () -> assertEquals("Chore #02", response.get(1).getDescription()),
+                () -> assertEquals(Boolean.TRUE, response.get(1).getIsCompleted())
+        );
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is COMPLETED > When the list is empty > Return an empty list")
+    void filterChoresWhenTheFilterIsCompletedWhenTheListIsEmptyReturnAnEmptyList() {
+        ChoreService service = new ChoreService();
+        List<Chore> response = service.filterChores(ChoreFilter.COMPLETED);
+        assertTrue(response.isEmpty());
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is COMPLETED > When the list is not empty > Return the filtered chores")
+    void filterChoresWhenTheFilterIsCompletedWhenTheListIsNotEmptyReturnTheFilteredChores() {
+        ChoreService service = new ChoreService();
+        service.getChores().add(new Chore(Boolean.FALSE,"Chore #01",  LocalDate.now()));
+        service.getChores().add(new Chore(Boolean.TRUE,"Chore #02",  LocalDate.now()));
+        List<Chore> response = service.filterChores(ChoreFilter.COMPLETED);
+        assertAll(
+                () -> assertEquals(1, response.size()),
+                () -> assertEquals("Chore #02", response.get(0).getDescription()),
+                () -> assertEquals(Boolean.TRUE, response.get(0).getIsCompleted())
+        );
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is UNCOMPLETED > When the list is empty > Return an empty list")
+    void filterChoresWhenTheFilterIsUncompletedWhenTheListIsEmptyReturnAnEmptyList() {
+        ChoreService service = new ChoreService();
+        List<Chore> response = service.filterChores(ChoreFilter.UNCOMPLETED);
+        assertTrue(response.isEmpty());
+    }
+
+    @Test
+    @DisplayName("#filterChores > When the filter is UNCOMPLETED > When the list is not empty > Return the filtered chores")
+    void filterChoresWhenTheFilterIsUncompletedWhenTheListIsNotEmptyReturnTheFilteredChores() {
+        ChoreService service = new ChoreService();
+        service.getChores().add(new Chore(Boolean.FALSE,"Chore #01",  LocalDate.now()));
+        service.getChores().add(new Chore(Boolean.TRUE,"Chore #02",  LocalDate.now()));
+        List<Chore> response = service.filterChores(ChoreFilter.UNCOMPLETED);
+        assertAll(
+                () -> assertEquals(1, response.size()),
+                () -> assertEquals("Chore #01", response.get(0).getDescription()),
+                () -> assertEquals(Boolean.FALSE, response.get(0).getIsCompleted())
+        );
     }
 }
